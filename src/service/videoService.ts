@@ -77,16 +77,12 @@ class VideoService {
       throw new Error("Invalid start or end time");
     }
     const fileName = `trimmed_${crypto.randomUUID()}.mp4`;
-    const output = path.join(
-      __dirname,
-      "../..",
-      "uploads",
-      `trimmed_${video.filename}`
-    );
+    console.log(fileName);
+    const output = path.join(__dirname, "../..", "uploads", fileName);
 
     await this.trimVideoHelper(video.path, start, end, output);
     const size = this.getFileSize(output);
-    const duration = this.getVideoDuration(output);
+    const duration = await this.getVideoDuration(output);
     const trimmedVideo = await Video.create({
       filename: fileName,
       path: output,
@@ -163,7 +159,8 @@ class VideoService {
         .setDuration(end - start)
         .output(output)
         .on("end", () => resolve(output))
-        .on("error", (err) => reject(new Error("Error trimming video")));
+        .on("error", (err) => reject(new Error("Error trimming video")))
+        .run();
     });
   }
 
