@@ -1,0 +1,39 @@
+import { Request, Response } from "express";
+import VideoService from "../service/videoService";
+
+class VideoController {
+  // Handle video upload
+  static async uploadVideo(req: Request, res: Response) {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: "No video file uploaded" });
+    }
+
+    try {
+      const videoData = await VideoService.uploadVideo(file);
+      res.status(201).json(videoData);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+  static async mergeVideos(req: Request, res: Response) {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length < 2) {
+      return res
+        .status(400)
+        .json({ error: "Please provide at least two video IDs" });
+    }
+
+    try {
+      const outputPath = await VideoService.mergeVideos(ids);
+      res
+        .status(200)
+        .json({ message: "Videos merged successfully", path: outputPath });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+}
+
+export default VideoController;
