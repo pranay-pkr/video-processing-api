@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database";
 
-class Video extends Model {
+export class Video extends Model {
   declare id: number;
   declare filename: string;
   declare path: string;
