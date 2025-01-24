@@ -4,11 +4,15 @@ import multer from "multer";
 import VideoController from "./controller/VideoController";
 import Video from "./models/Video";
 import path from "path";
+import authMiddleware from "./middleware/auth";
 
 const app = express();
 app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+app.use((req, res, next) => {
+  authMiddleware(req, res, next);
 });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
