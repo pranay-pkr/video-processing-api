@@ -69,24 +69,37 @@ class VideoService {
     id: number,
     start: number,
     end: number
-  ): Promise<string> {
+  ): Promise<VideoMetadata> {
     const video = await Video.findByPk(id);
     if (!video) throw new Error("Video not found");
 
+    if (start < 0 || end < 0 || start >= end || end > video.duration) {
+      throw new Error("Invalid start or end time");
+    }
+    const fileName = `trimmed_${crypto.randomUUID()}.mp4`;
     const output = path.join(
       __dirname,
-      "..",
+      "../..",
       "uploads",
       `trimmed_${video.filename}`
     );
-    return new Promise((resolve, reject) => {
-      ffmpeg(video.path)
-        .setStartTime(start)
-        .setDuration(end - start)
-        .output(output)
-        .on("end", () => resolve(output))
-        .on("error", (err) => reject(new Error("Error trimming video")));
+
+    await this.trimVideoHelper(video.path, start, end, output);
+    const size = this.getFileSize(output);
+    const duration = this.getVideoDuration(output);
+    const trimmedVideo = await Video.create({
+      filename: fileName,
+      path: output,
+      size: size,
+      duration,
     });
+    return {
+      id: trimmedVideo.id,
+      filename: trimmedVideo.filename,
+      path: trimmedVideo.path,
+      size: trimmedVideo.size,
+      duration: trimmedVideo.duration,
+    };
   }
 
   static async mergeVideos(ids: number[]): Promise<VideoMetadata> {
@@ -100,15 +113,14 @@ class VideoService {
       }
       const fileName = `merged_video_${crypto.randomUUID()}.mp4`;
       const output = path.join(__dirname, "../..", "uploads", fileName);
-      console.log(output);
       const inputFiles = videos.map((video) => video.path);
       await this.mergeVideosHelper(inputFiles, output);
-      const fileInfo = fs.statSync(output);
+      const size = this.getFileSize(output);
       const duration = await VideoService.getVideoDuration(output);
       const video = await Video.create({
         filename: fileName,
         path: output,
-        size: fileInfo.size,
+        size: size,
         duration,
       });
 
@@ -138,6 +150,26 @@ class VideoService {
         })
         .mergeToFile(output, path.join(__dirname, "..", "uploads"));
     });
+  }
+  private static trimVideoHelper(
+    path: string,
+    start: number,
+    end: number,
+    output: string
+  ) {
+    return new Promise((resolve, reject) => {
+      ffmpeg(path)
+        .setStartTime(start)
+        .setDuration(end - start)
+        .output(output)
+        .on("end", () => resolve(output))
+        .on("error", (err) => reject(new Error("Error trimming video")));
+    });
+  }
+
+  private static getFileSize(filePath: string): number {
+    const stats = fs.statSync(filePath);
+    return stats.size;
   }
 }
 
