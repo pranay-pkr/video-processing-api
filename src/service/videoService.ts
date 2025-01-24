@@ -14,8 +14,6 @@ class VideoService {
   // Video upload service
   static async uploadVideo(file: Express.Multer.File): Promise<VideoMetadata> {
     try {
-      if (!file) throw new ErrorHandler("No video file uploaded", 400);
-
       // Check file size (max: 25MB)
       if (file.size > 25 * 1024 * 1024) {
         throw new ErrorHandler(
@@ -66,7 +64,6 @@ class VideoService {
         throw new ErrorHandler("Invalid start or end time", 400);
       }
       const fileName = `trimmed_${crypto.randomUUID()}.mp4`;
-      console.log(fileName);
       const output = path.join(__dirname, "../..", "uploads", fileName);
 
       await this.trimVideoHelper(video.path, start, end, output);
@@ -132,7 +129,6 @@ class VideoService {
       };
       const token = this.generateSignedUrl(payload);
 
-      // Generate signed URL
       const signedUrl = `${constants.HOST}:${constants.PORT}/api/video/${id}?token=${token}`;
 
       return signedUrl;
@@ -153,10 +149,8 @@ class VideoService {
         }
       });
       let decodedToken: any = jwt.decode(token);
-      console.log(decodedToken);
       let id = decodedToken?.id as string;
       const video = await Video.findByPk(id);
-      console.log(video);
       if (!video) throw new Error("Video not found");
 
       return video.path;
@@ -178,7 +172,7 @@ class VideoService {
         .on("end", () => resolve(output))
         .on("error", (err) => {
           console.log(err);
-          reject(new Error("Error merging videos"));
+          reject(new ErrorHandler("Error merging videos", 500));
         })
         .mergeToFile(output, path.join(__dirname, "..", "uploads"));
     });
@@ -195,7 +189,9 @@ class VideoService {
         .setDuration(end - start)
         .output(output)
         .on("end", () => resolve(output))
-        .on("error", (err) => reject(new Error("Error trimming video")))
+        .on("error", (err) =>
+          reject(new ErrorHandler("Error trimming video", 500))
+        )
         .run();
     });
   }
