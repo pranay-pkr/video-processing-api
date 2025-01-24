@@ -16,6 +16,10 @@ app.post("/upload", upload.single("video"), (req, res) => {
   VideoController.uploadVideo(req, res);
 });
 
+app.post("/merge", (req, res) => {
+  VideoController.mergeVideos(req, res);
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
   Video.sync();
