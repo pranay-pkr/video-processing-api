@@ -38,7 +38,7 @@ Video.init(
   },
   {
     sequelize,
-    tableName: "videos",
+    modelName: "videos",
     timestamps: true,
   }
 );
