@@ -37,7 +37,6 @@ export class VideoService {
         size: file.size,
         duration,
       });
-
       return {
         id: video.id,
       };
@@ -130,7 +129,7 @@ export class VideoService {
       };
       const token = this.generateSignedUrl(payload);
 
-      const signedUrl = `${constants.HOST}:${constants.PORT}/api/video/${id}?token=${token}`;
+      const signedUrl = `${constants.HOST}:${constants.PORT}/api/videos/${id}?token=${token}`;
 
       return signedUrl;
     } catch (error: any) {
