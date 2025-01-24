@@ -10,8 +10,27 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-const upload = multer({ dest: "./uploads/" });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/"); // Specify the destination folder
+  },
+  filename: function (req, file, cb) {
+    const fileExtension = file.originalname.split(".").pop(); // Get the file extension
+    const uniqueFilename = `${crypto.randomUUID()}.${fileExtension}`;
+    cb(null, uniqueFilename);
+  },
+});
 
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.match(/\.(mp4|avi)$/)) {
+      return cb(new Error(`Please upload a video file of format mp4 or avi`));
+    }
+    console.log("file", file.mimetype);
+    cb(null, true);
+  },
+});
 app.post("/upload", upload.single("video"), (req, res) => {
   VideoController.uploadVideo(req, res);
 });
