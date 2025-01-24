@@ -27,9 +27,7 @@ class VideoController {
 
     try {
       const outputPath = await VideoService.mergeVideos(ids);
-      res
-        .status(200)
-        .json({ message: "Videos merged successfully", path: outputPath });
+      res.status(200).json(outputPath);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -44,9 +42,7 @@ class VideoController {
 
     try {
       const outputPath = await VideoService.trimVideo(id, start, end);
-      res
-        .status(200)
-        .json({ message: "Video trimmed successfully", path: outputPath });
+      res.status(200).json(outputPath);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
