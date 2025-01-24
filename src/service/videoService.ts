@@ -53,6 +53,7 @@ class VideoService {
       };
     } catch (error: any) {
       console.log(error.message);
+      fs.unlinkSync(file.path);
       throw new Error(error.message);
     }
   }
