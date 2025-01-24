@@ -27,7 +27,6 @@ const upload = multer({
     if (!file.originalname.match(/\.(mp4|avi)$/)) {
       return cb(new Error(`Please upload a video file of format mp4 or avi`));
     }
-    console.log("file", file.mimetype);
     cb(null, true);
   },
 });
@@ -51,7 +50,9 @@ app.get("/api/videos/:id", (req, res) => {
   VideoController.getVideo(req, res);
 });
 
-app.listen(process.env.PORT, () => {
+export const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
   Video.sync();
 });
+
+export default app;
