@@ -88,6 +88,53 @@ class VideoService {
         .on("error", (err) => reject(new Error("Error trimming video")));
     });
   }
+
+  static async mergeVideos(ids: number[]): Promise<VideoMetadata> {
+    try {
+      const videos = await Video.findAll({
+        where: { id: ids },
+      });
+
+      if (videos.length < 2) {
+        throw new Error("One or more videos not found");
+      }
+      const fileName = `merged_video_${crypto.randomUUID()}.mp4`;
+      const output = path.join(__dirname, "..", "uploads", fileName);
+      const inputFiles = videos.map((video) => video.path);
+      await this.mergeVideosHelper(inputFiles, output);
+      const fileInfo = fs.statSync(output);
+      const duration = await VideoService.getVideoDuration(output);
+      const video = await Video.create({
+        filename: fileName,
+        path: output,
+        size: fileInfo.size,
+        duration,
+      });
+
+      return {
+        id: video.id,
+        filename: video.filename,
+        path: video.path,
+        size: video.size,
+        duration: video.duration,
+      };
+    } catch (error: any) {
+      console.log(error.message);
+      throw new Error(error.message);
+    }
+  }
+
+  private static mergeVideosHelper(inputFiles: string[], output: string) {
+    return new Promise((resolve, reject) => {
+      const command = ffmpeg();
+      inputFiles.forEach((file) => command.input(file));
+
+      command
+        .on("end", () => resolve(output))
+        .on("error", (err) => reject(new Error("Error merging videos")))
+        .mergeToFile(output, path.join(__dirname, "..", "uploads"));
+    });
+  }
 }
 
 export default VideoService;
