@@ -4,6 +4,7 @@ import multer from "multer";
 import VideoService from "./service/videoService";
 import VideoController from "./controller/videoController";
 import Video from "./models/video";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -12,7 +13,7 @@ app.get("/", (req, res) => {
 });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads/"); // Specify the destination folder
+    cb(null, path.join(__dirname, "../", "uploads")); // Specify the destination folder
   },
   filename: function (req, file, cb) {
     const fileExtension = file.originalname.split(".").pop(); // Get the file extension
