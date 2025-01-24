@@ -2,6 +2,8 @@ import path from "path";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import Video from "../models/video";
+import jwt from "jsonwebtoken";
+import { constants } from "../constants";
 
 interface VideoMetadata {
   id: number;
@@ -123,6 +125,25 @@ class VideoService {
     }
   }
 
+  static async getSignedUrl(id: string): Promise<string> {
+    try {
+      const video = await Video.findByPk(id);
+      if (!video) throw new Error("Video not found");
+      const payload = {
+        id: video.id,
+      };
+      const token = this.generateSignedUrl(payload);
+
+      // Generate signed URL
+      const signedUrl = `${constants.HOST}:${constants.PORT}/api/video/${id}?token=${token}`;
+
+      return signedUrl;
+    } catch (error: any) {
+      console.log(error.message);
+      throw new Error(error.message);
+    }
+  }
+
   private static mergeVideosHelper(inputFiles: string[], output: string) {
     return new Promise((resolve, reject) => {
       const command = ffmpeg();
@@ -157,6 +178,12 @@ class VideoService {
   private static getFileSize(filePath: string): number {
     const stats = fs.statSync(filePath);
     return stats.size;
+  }
+
+  private static generateSignedUrl(payload: any) {
+    return jwt.sign(payload, constants.JWT_SECRET, {
+      expiresIn: "1hr",
+    });
   }
 }
 

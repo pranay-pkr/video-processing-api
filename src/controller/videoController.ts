@@ -47,6 +47,21 @@ class VideoController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  static async getSignedUrl(req: Request, res: Response) {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Missing required parameters" });
+    }
+
+    try {
+      const signedUrl = await VideoService.getSignedUrl(id);
+      res.status(200).json({ signedUrl });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default VideoController;
