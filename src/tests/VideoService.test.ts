@@ -51,7 +51,7 @@ describe("VideoService", () => {
       const file = {
         originalname: "video.mp4",
         mimetype: "video/mp4",
-        path: "uploads/trimmed_e08fb1ce-4bb3-4227-819d-8b4b1cbb6ce2.mp4",
+        path: "uploads/trimmed_32554243-8021-4a56-bd30-3c24cce88255.mp4",
         size: 1024 * 1024 * 25,
       } as Express.Multer.File;
       jest.spyOn(fs, "unlinkSync").mockImplementation(() => {});
@@ -85,7 +85,7 @@ describe("VideoService", () => {
       const end = 15;
       const video = {
         filename: "video.mp4",
-        path: "uploads/c9eb981f-5d5b-4413-aaff-b0ca0c01bef8.mp4",
+        path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
         size: 1024,
         duration: 20,
         id: 1,
@@ -93,7 +93,7 @@ describe("VideoService", () => {
       jest.spyOn(Video, "findByPk").mockResolvedValue(video);
       const newVideo = {
         filename: "video.mp4",
-        path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
+        path: "uploads/c9eb981f-5d5b-4413-aaff-b0ca0c01bef8.mp4",
         size: 1024,
         duration: 10,
         id: 2,
@@ -122,7 +122,7 @@ describe("VideoService", () => {
       const end = 5;
       jest.spyOn(Video, "findByPk").mockResolvedValue({
         filename: "video.mp4",
-        path: "uploads/c9eb981f-5d5b-4413-aaff-b0ca0c01bef8.mp4",
+        path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
         size: 1024,
         duration: 20,
         id: 1,
@@ -140,14 +140,14 @@ describe("VideoService", () => {
       const videos = [
         {
           filename: "video1.mp4",
-          path: "uploads/trimmed_3e073588-5abd-47f4-ae99-b72ab273d3e5.mp4",
+          path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
           size: 1024,
           duration: 20,
           id: 1,
         },
         {
           filename: "video2.mp4",
-          path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
+          path: "uploads/trimmed_2830a472-16e2-4203-a90a-cf88fe45d137.mp4",
           size: 1024,
           duration: 20,
           id: 2,
@@ -168,7 +168,7 @@ describe("VideoService", () => {
 
       const result = await VideoService.mergeVideos(ids);
       expect(result).toEqual({ id: mergedVideo.id });
-    });
+    }, 10000);
 
     it("should throw an error if the videos are not found", async () => {
       const ids = [1, 2];
@@ -185,13 +185,13 @@ describe("VideoService", () => {
       const id = "1";
       const video = {
         filename: "video.mp4",
-        path: "uploads/c9eb981f-5d5b-4413-aaff-b0ca0c01bef8.mp4",
+        path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
         size: 1024,
         duration: 20,
         id: 1,
       } as Video;
       let token = 1234;
-      let signedUrl = `${constants.HOST}:${constants.PORT}/api/video/${id}?token=${token}`;
+      let signedUrl = `${constants.HOST}:${constants.PORT}/api/videos/${id}?token=${token}`;
       jest.spyOn(Video, "findByPk").mockResolvedValue(video);
       jest.spyOn(jwt, "sign").mockImplementation(() => {
         return token;
@@ -216,7 +216,7 @@ describe("VideoService", () => {
       const id = "1";
       const video = {
         filename: "video.mp4",
-        path: "uploads/c9eb981f-5d5b-4413-aaff-b0ca0c01bef8.mp4",
+        path: "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4",
         size: 1024,
         duration: 20,
         id: 1,

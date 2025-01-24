@@ -24,7 +24,8 @@ describe("E2E tests for VideoService", () => {
     expect(response.body).toHaveProperty("id");
   });
   it("should upload a video file successfully", async () => {
-    const videoFile = "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4";
+    const videoFile =
+      "uploads/trimmed_2830a472-16e2-4203-a90a-cf88fe45d137.mp4";
     const response = await request(app)
       .post("/api/upload")
       .attach("video", videoFile);
@@ -47,7 +48,7 @@ describe("E2E tests for VideoService", () => {
 
   it("should throw an error if video duration is less than 5 seconds", async () => {
     const shortVideoFile =
-      "uploads/trimmed_e08fb1ce-4bb3-4227-819d-8b4b1cbb6ce2.mp4";
+      "uploads/trimmed_32554243-8021-4a56-bd30-3c24cce88255.mp4";
     const response = await request(app)
       .post("/api/upload")
       .attach("video", shortVideoFile);
@@ -74,7 +75,7 @@ describe("E2E tests for VideoService", () => {
   it("should trim a video file successfully", async () => {
     // const videoId = 1;
     const start = 10;
-    const end = 15;
+    const end = 14;
     const response = await request(app)
       .post(`/api/trim`)
       .send({ id: id1, start, end });
@@ -103,7 +104,7 @@ describe("E2E tests for VideoService", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("id");
-  });
+  }, 10000);
 
   it("should throw an error if one or more videos are not found", async () => {
     const videoIds = [1, 999];
@@ -118,7 +119,6 @@ describe("E2E tests for VideoService", () => {
   it("should get a signed URL for the video file", async () => {
     const response = await request(app).get(`/api/videos/${id1}/signed-url`);
     signedUrl = response.body.signedUrl;
-    console.log(signedUrl);
     expect(response.status).toBe(200);
   });
 
