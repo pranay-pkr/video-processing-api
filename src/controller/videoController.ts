@@ -62,6 +62,20 @@ class VideoController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  static async getVideo(req: Request, res: Response) {
+    const { id } = req.params;
+    const { token } = req.query;
+    if (!id || !token) {
+      return res.status(400).json({ error: "Missing required parameters" });
+    }
+    try {
+      const video = await VideoService.getVideo(id, token);
+      res.status(200).sendFile(video);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default VideoController;

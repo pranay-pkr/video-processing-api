@@ -4,6 +4,7 @@ import ffmpeg from "fluent-ffmpeg";
 import Video from "../models/video";
 import jwt from "jsonwebtoken";
 import { constants } from "../constants";
+import ErrorHandler from "../ErrorHandler";
 
 interface VideoMetadata {
   id: number;
@@ -138,6 +139,27 @@ class VideoService {
       const signedUrl = `${constants.HOST}:${constants.PORT}/api/video/${id}?token=${token}`;
 
       return signedUrl;
+    } catch (error: any) {
+      console.log(error.message);
+      throw new Error(error.message);
+    }
+  }
+
+  static async getVideo(id: string, token: any): Promise<string> {
+    try {
+      jwt.verify(token, constants.JWT_SECRET, (err: any, decoded: any) => {
+        if (err) {
+          throw new ErrorHandler("Invalid token", 400);
+        }
+      });
+      let decodedToken: any = jwt.decode(token);
+      console.log(decodedToken);
+      let id = decodedToken?.id as string;
+      const video = await Video.findByPk(id);
+      console.log(video);
+      if (!video) throw new Error("Video not found");
+
+      return video.path;
     } catch (error: any) {
       console.log(error.message);
       throw new Error(error.message);
