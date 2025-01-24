@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import VideoService from "../service/videoService";
+import ErrorHandler from "../ErrorHandler";
 
 class VideoController {
   // Handle video upload
@@ -13,6 +14,9 @@ class VideoController {
       const videoData = await VideoService.uploadVideo(file);
       res.status(201).json(videoData);
     } catch (error: any) {
+      if (error instanceof ErrorHandler) {
+        res.status(error.status).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   }
@@ -29,6 +33,9 @@ class VideoController {
       const outputPath = await VideoService.mergeVideos(ids);
       res.status(200).json(outputPath);
     } catch (error: any) {
+      if (error instanceof ErrorHandler) {
+        res.status(error.status).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   }
@@ -44,6 +51,9 @@ class VideoController {
       const outputPath = await VideoService.trimVideo(id, start, end);
       res.status(200).json(outputPath);
     } catch (error: any) {
+      if (error instanceof ErrorHandler) {
+        res.status(error.status).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   }
@@ -59,6 +69,9 @@ class VideoController {
       const signedUrl = await VideoService.getSignedUrl(id);
       res.status(200).json({ signedUrl });
     } catch (error: any) {
+      if (error instanceof ErrorHandler) {
+        res.status(error.status).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   }
@@ -73,6 +86,9 @@ class VideoController {
       const video = await VideoService.getVideo(id, token);
       res.status(200).sendFile(video);
     } catch (error: any) {
+      if (error instanceof ErrorHandler) {
+        res.status(error.status).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   }
