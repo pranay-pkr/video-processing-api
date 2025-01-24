@@ -5,10 +5,6 @@ import Video from "../models/video";
 
 interface VideoMetadata {
   id: number;
-  filename: string;
-  path: string;
-  size: number;
-  duration: number;
 }
 
 class VideoService {
@@ -54,10 +50,6 @@ class VideoService {
 
       return {
         id: video.id,
-        filename: video.filename,
-        path: video.path,
-        size: video.size,
-        duration: video.duration,
       };
     } catch (error: any) {
       console.log(error.message);
@@ -91,10 +83,6 @@ class VideoService {
     });
     return {
       id: trimmedVideo.id,
-      filename: trimmedVideo.filename,
-      path: trimmedVideo.path,
-      size: trimmedVideo.size,
-      duration: trimmedVideo.duration,
     };
   }
 
@@ -122,10 +110,6 @@ class VideoService {
 
       return {
         id: video.id,
-        filename: video.filename,
-        path: video.path,
-        size: video.size,
-        duration: video.duration,
       };
     } catch (error: any) {
       console.log(error.message);
