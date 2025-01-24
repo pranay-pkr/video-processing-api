@@ -34,6 +34,23 @@ class VideoController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  static async trimVideo(req: Request, res: Response) {
+    const { id, start, end } = req.body;
+
+    if (!id || start === undefined || end === undefined) {
+      return res.status(400).json({ error: "Missing required parameters" });
+    }
+
+    try {
+      const outputPath = await VideoService.trimVideo(id, start, end);
+      res
+        .status(200)
+        .json({ message: "Video trimmed successfully", path: outputPath });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default VideoController;
