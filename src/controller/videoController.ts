@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import VideoService from "../service/VideoService";
 import ErrorHandler from "../ErrorHandler";
 
-class VideoController {
+export class VideoController {
   // Handle video upload
   static async uploadVideo(req: Request, res: Response) {
     const file = req.file;
