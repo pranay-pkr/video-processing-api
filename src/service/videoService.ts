@@ -64,6 +64,30 @@ class VideoService {
       throw new Error(error.message);
     }
   }
+
+  static async trimVideo(
+    id: number,
+    start: number,
+    end: number
+  ): Promise<string> {
+    const video = await Video.findByPk(id);
+    if (!video) throw new Error("Video not found");
+
+    const output = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      `trimmed_${video.filename}`
+    );
+    return new Promise((resolve, reject) => {
+      ffmpeg(video.path)
+        .setStartTime(start)
+        .setDuration(end - start)
+        .output(output)
+        .on("end", () => resolve(output))
+        .on("error", (err) => reject(new Error("Error trimming video")));
+    });
+  }
 }
 
 export default VideoService;
