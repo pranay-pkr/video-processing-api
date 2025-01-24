@@ -31,15 +31,15 @@ const upload = multer({
     cb(null, true);
   },
 });
-app.post("/upload", upload.single("video"), (req, res) => {
+app.post("/api/upload", upload.single("video"), (req, res) => {
   VideoController.uploadVideo(req, res);
 });
 
-app.post("/merge", (req, res) => {
+app.post("/api/merge", (req, res) => {
   VideoController.mergeVideos(req, res);
 });
 
-app.post("/trim", (req, res) => {
+app.post("/api/trim", (req, res) => {
   VideoController.trimVideo(req, res);
 });
 
