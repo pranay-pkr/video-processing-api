@@ -99,7 +99,8 @@ class VideoService {
         throw new Error("One or more videos not found");
       }
       const fileName = `merged_video_${crypto.randomUUID()}.mp4`;
-      const output = path.join(__dirname, "..", "uploads", fileName);
+      const output = path.join(__dirname, "../..", "uploads", fileName);
+      console.log(output);
       const inputFiles = videos.map((video) => video.path);
       await this.mergeVideosHelper(inputFiles, output);
       const fileInfo = fs.statSync(output);
@@ -131,7 +132,10 @@ class VideoService {
 
       command
         .on("end", () => resolve(output))
-        .on("error", (err) => reject(new Error("Error merging videos")))
+        .on("error", (err) => {
+          console.log(err);
+          reject(new Error("Error merging videos"));
+        })
         .mergeToFile(output, path.join(__dirname, "..", "uploads"));
     });
   }
