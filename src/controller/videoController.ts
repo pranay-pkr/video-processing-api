@@ -15,7 +15,7 @@ export class VideoController {
       res.status(201).json(videoData);
     } catch (error: any) {
       if (error instanceof ErrorHandler) {
-        res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json({ error: error.message });
       }
       res.status(500).json({ error: error.message });
     }
@@ -34,9 +34,9 @@ export class VideoController {
       res.status(200).json(outputPath);
     } catch (error: any) {
       if (error instanceof ErrorHandler) {
-        res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json({ error: error.message });
       }
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -52,9 +52,9 @@ export class VideoController {
       res.status(200).json(outputPath);
     } catch (error: any) {
       if (error instanceof ErrorHandler) {
-        res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json({ error: error.message });
       }
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -70,9 +70,9 @@ export class VideoController {
       res.status(200).json({ signedUrl });
     } catch (error: any) {
       if (error instanceof ErrorHandler) {
-        res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json({ error: error.message });
       }
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -84,12 +84,12 @@ export class VideoController {
     }
     try {
       const video = await VideoService.getVideo(id, token);
-      res.status(200).sendFile(video);
+      return res.status(200).sendFile(video);
     } catch (error: any) {
       if (error instanceof ErrorHandler) {
-        res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json({ error: error.message });
       }
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 }
