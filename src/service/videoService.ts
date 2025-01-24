@@ -10,7 +10,7 @@ interface VideoMetadata {
   id: number;
 }
 
-class VideoService {
+export class VideoService {
   // Video upload service
   static async uploadVideo(file: Express.Multer.File): Promise<VideoMetadata> {
     try {
@@ -47,6 +47,7 @@ class VideoService {
       if (error instanceof ErrorHandler) {
         throw error;
       }
+
       throw new ErrorHandler(error.message, 500);
     }
   }
@@ -151,7 +152,7 @@ class VideoService {
       let decodedToken: any = jwt.decode(token);
       let id = decodedToken?.id as string;
       const video = await Video.findByPk(id);
-      if (!video) throw new Error("Video not found");
+      if (!video) throw new ErrorHandler("Video not found", 404);
 
       return video.path;
     } catch (error: any) {
