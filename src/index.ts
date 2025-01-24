@@ -20,6 +20,10 @@ app.post("/merge", (req, res) => {
   VideoController.mergeVideos(req, res);
 });
 
+app.post("/trim", (req, res) => {
+  VideoController.trimVideo(req, res);
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
   Video.sync();
