@@ -63,28 +63,33 @@ class VideoService {
     start: number,
     end: number
   ): Promise<VideoMetadata> {
-    const video = await Video.findByPk(id);
-    if (!video) throw new Error("Video not found");
+    try {
+      const video = await Video.findByPk(id);
+      if (!video) throw new Error("Video not found");
 
-    if (start < 0 || end < 0 || start >= end || end > video.duration) {
-      throw new Error("Invalid start or end time");
+      if (start < 0 || end < 0 || start >= end || end > video.duration) {
+        throw new Error("Invalid start or end time");
+      }
+      const fileName = `trimmed_${crypto.randomUUID()}.mp4`;
+      console.log(fileName);
+      const output = path.join(__dirname, "../..", "uploads", fileName);
+
+      await this.trimVideoHelper(video.path, start, end, output);
+      const size = this.getFileSize(output);
+      const duration = await this.getVideoDuration(output);
+      const trimmedVideo = await Video.create({
+        filename: fileName,
+        path: output,
+        size: size,
+        duration,
+      });
+      return {
+        id: trimmedVideo.id,
+      };
+    } catch (error: any) {
+      console.log(error.message);
+      throw new Error(error.message);
     }
-    const fileName = `trimmed_${crypto.randomUUID()}.mp4`;
-    console.log(fileName);
-    const output = path.join(__dirname, "../..", "uploads", fileName);
-
-    await this.trimVideoHelper(video.path, start, end, output);
-    const size = this.getFileSize(output);
-    const duration = await this.getVideoDuration(output);
-    const trimmedVideo = await Video.create({
-      filename: fileName,
-      path: output,
-      size: size,
-      duration,
-    });
-    return {
-      id: trimmedVideo.id,
-    };
   }
 
   static async mergeVideos(ids: number[]): Promise<VideoMetadata> {
