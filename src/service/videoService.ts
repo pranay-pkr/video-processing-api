@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
-import Video from "../models/video";
+import Video from "../models/Video";
 import jwt from "jsonwebtoken";
 import { constants } from "../constants";
 import ErrorHandler from "../ErrorHandler";

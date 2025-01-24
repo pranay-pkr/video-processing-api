@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import VideoService from "../service/videoService";
+import VideoService from "../service/VideoService";
 import ErrorHandler from "../ErrorHandler";
 
 class VideoController {

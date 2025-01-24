@@ -1,9 +1,8 @@
 import express from "express";
 import "dotenv/config";
 import multer from "multer";
-import VideoService from "./service/videoService";
-import VideoController from "./controller/videoController";
-import Video from "./models/video";
+import VideoController from "./controller/VideoController";
+import Video from "./models/Video";
 import path from "path";
 
 const app = express();
