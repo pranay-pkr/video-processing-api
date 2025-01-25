@@ -1,6 +1,9 @@
 import request from "supertest";
 import app, { server } from "../../index";
 import { Video } from "../../models/Video";
+import { constants } from "../../constants";
+
+const apiToken = constants.API_TOKEN;
 
 describe("E2E tests for VideoService", () => {
   process.env.NODE_ENV = "test";
@@ -18,6 +21,7 @@ describe("E2E tests for VideoService", () => {
     const videoFile = "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4";
     const response = await request(app)
       .post("/api/upload")
+      .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", videoFile);
     id1 = response.body.id;
     expect(response.status).toBe(201);
@@ -28,6 +32,7 @@ describe("E2E tests for VideoService", () => {
       "uploads/trimmed_2830a472-16e2-4203-a90a-cf88fe45d137.mp4";
     const response = await request(app)
       .post("/api/upload")
+      .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", videoFile);
     id2 = response.body.id;
     expect(response.status).toBe(201);
@@ -38,6 +43,7 @@ describe("E2E tests for VideoService", () => {
     const largeVideoFile = "uploads/06ff8a6e-0e79-4b0b-94ea-1e3a0a7f32e1.mp4";
     const response = await request(app)
       .post("/api/upload")
+      .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", largeVideoFile);
 
     expect(response.status).toBe(400);
@@ -51,6 +57,7 @@ describe("E2E tests for VideoService", () => {
       "uploads/trimmed_32554243-8021-4a56-bd30-3c24cce88255.mp4";
     const response = await request(app)
       .post("/api/upload")
+      .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", shortVideoFile);
 
     expect(response.status).toBe(400);
@@ -64,6 +71,7 @@ describe("E2E tests for VideoService", () => {
       "uploads/merged_video_8a1d6e10-3e4f-4087-93c5-3e5980cd1665.mp4";
     const response = await request(app)
       .post("/api/upload")
+      .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", longVideoFile);
 
     expect(response.status).toBe(400);
@@ -78,6 +86,7 @@ describe("E2E tests for VideoService", () => {
     const end = 14;
     const response = await request(app)
       .post(`/api/trim`)
+      .set("Authorization", `Bearer ${apiToken}`)
       .send({ id: id1, start, end });
 
     expect(response.status).toBe(200);
@@ -90,6 +99,7 @@ describe("E2E tests for VideoService", () => {
     const end = 15;
     const response = await request(app)
       .post(`/api/trim`)
+      .set("Authorization", `Bearer ${apiToken}`)
       .send({ id: nonExistentVideoId, start, end });
 
     expect(response.status).toBe(404);
@@ -100,6 +110,7 @@ describe("E2E tests for VideoService", () => {
     const videoIds = [id1, id2];
     const response = await request(app)
       .post("/api/merge")
+      .set("Authorization", `Bearer ${apiToken}`)
       .send({ ids: videoIds });
 
     expect(response.status).toBe(200);
@@ -110,6 +121,7 @@ describe("E2E tests for VideoService", () => {
     const videoIds = [1, 999];
     const response = await request(app)
       .post("/api/merge")
+      .set("Authorization", `Bearer ${apiToken}`)
       .send({ ids: videoIds });
 
     expect(response.status).toBe(400);
@@ -117,7 +129,9 @@ describe("E2E tests for VideoService", () => {
   });
 
   it("should get a signed URL for the video file", async () => {
-    const response = await request(app).get(`/api/videos/${id1}/signed-url`);
+    const response = await request(app)
+      .get(`/api/videos/${id1}/signed-url`)
+      .set("Authorization", `Bearer ${apiToken}`);
     signedUrl = response.body.signedUrl;
     expect(response.status).toBe(200);
   });
@@ -126,6 +140,7 @@ describe("E2E tests for VideoService", () => {
     const nonExistentVideoId = 999;
     const response = await request(app)
       .get(`/api/videos/${nonExistentVideoId}/signed-url`)
+      .set("Authorization", `Bearer ${apiToken}`)
       .expect(404);
     expect(response.body).toEqual({ error: "Video not found" });
   });
@@ -133,7 +148,9 @@ describe("E2E tests for VideoService", () => {
   it("should download the video file successfully", async () => {
     const url = new URL(signedUrl);
 
-    const response = await request(app).get(`${url.pathname}${url.search}`);
+    const response = await request(app)
+      .get(`${url.pathname}${url.search}`)
+      .set("Authorization", `Bearer ${apiToken}`);
     expect(response.status).toBe(200);
   });
 });
