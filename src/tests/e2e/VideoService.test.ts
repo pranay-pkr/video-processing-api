@@ -20,7 +20,7 @@ describe("E2E tests for VideoService", () => {
   it("should upload a video file successfully", async () => {
     const videoFile = "uploads/3bf3a240-f3a2-4a0d-b6ad-2a93d5e37253.mp4";
     const response = await request(app)
-      .post("/api/upload")
+      .post("/api/videos/upload")
       .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", videoFile);
     id1 = response.body.id;
@@ -31,7 +31,7 @@ describe("E2E tests for VideoService", () => {
     const videoFile =
       "uploads/trimmed_2830a472-16e2-4203-a90a-cf88fe45d137.mp4";
     const response = await request(app)
-      .post("/api/upload")
+      .post("/api/videos/upload")
       .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", videoFile);
     id2 = response.body.id;
@@ -42,7 +42,7 @@ describe("E2E tests for VideoService", () => {
   it("should throw an error if file size exceeds 25MB", async () => {
     const largeVideoFile = "uploads/06ff8a6e-0e79-4b0b-94ea-1e3a0a7f32e1.mp4";
     const response = await request(app)
-      .post("/api/upload")
+      .post("/api/videos/upload")
       .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", largeVideoFile);
 
@@ -56,7 +56,7 @@ describe("E2E tests for VideoService", () => {
     const shortVideoFile =
       "uploads/trimmed_32554243-8021-4a56-bd30-3c24cce88255.mp4";
     const response = await request(app)
-      .post("/api/upload")
+      .post("/api/videos/upload")
       .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", shortVideoFile);
 
@@ -70,7 +70,7 @@ describe("E2E tests for VideoService", () => {
     const longVideoFile =
       "uploads/merged_video_8a1d6e10-3e4f-4087-93c5-3e5980cd1665.mp4";
     const response = await request(app)
-      .post("/api/upload")
+      .post("/api/videos/upload")
       .set("Authorization", `Bearer ${apiToken}`)
       .attach("video", longVideoFile);
 
@@ -85,7 +85,7 @@ describe("E2E tests for VideoService", () => {
     const start = 10;
     const end = 14;
     const response = await request(app)
-      .post(`/api/trim`)
+      .post(`/api/videos/trim`)
       .set("Authorization", `Bearer ${apiToken}`)
       .send({ id: id1, start, end });
 
@@ -98,7 +98,7 @@ describe("E2E tests for VideoService", () => {
     const start = 10;
     const end = 15;
     const response = await request(app)
-      .post(`/api/trim`)
+      .post(`/api/videos/trim`)
       .set("Authorization", `Bearer ${apiToken}`)
       .send({ id: nonExistentVideoId, start, end });
 
@@ -109,7 +109,7 @@ describe("E2E tests for VideoService", () => {
   it("should merge videos successfully", async () => {
     const videoIds = [id1, id2];
     const response = await request(app)
-      .post("/api/merge")
+      .post("/api/videos/merge")
       .set("Authorization", `Bearer ${apiToken}`)
       .send({ ids: videoIds });
 
@@ -120,7 +120,7 @@ describe("E2E tests for VideoService", () => {
   it("should throw an error if one or more videos are not found", async () => {
     const videoIds = [1, 999];
     const response = await request(app)
-      .post("/api/merge")
+      .post("/api/videos/merge")
       .set("Authorization", `Bearer ${apiToken}`)
       .send({ ids: videoIds });
 
@@ -146,6 +146,7 @@ describe("E2E tests for VideoService", () => {
   });
 
   it("should download the video file successfully", async () => {
+    console.log(signedUrl);
     const url = new URL(signedUrl);
 
     const response = await request(app)
