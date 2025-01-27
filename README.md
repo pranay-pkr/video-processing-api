@@ -36,7 +36,7 @@ This service allows users to upload video files, process them, and retrieve sign
 
 ## References
 
-[1] FFmpeg: A free and open-source multimedia processing library. https://ffmpeg.org/
-[2] Node.js: A JavaScript runtime built on Chrome's V8 JavaScript engine. https://nodejs.org/
-[3] Fluent-FFmpeg: https://github.com/fluent-ffmpeg/node-fluent-ffmpeg
+[1] FFmpeg: https://ffmpeg.org/ <br>
+[2] Node.js: https://nodejs.org/ <br>
+[3] Fluent-FFmpeg: https://github.com/fluent-ffmpeg/node-fluent-ffmpeg <br>
 [4] Sequelize: https://sequelize.org/
